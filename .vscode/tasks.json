@@ -16,7 +16,7 @@
         {
             "label": "run",
             "type": "shell",
-            "command": "build/src/rusty_cmake.exe",
+            "command": "./build/src/rusty_cmake",
             "dependsOn": "build"
         },
         {
