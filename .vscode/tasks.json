@@ -19,5 +19,10 @@
             "command": "build/src/rusty_cmake.exe",
             "dependsOn": "build"
         },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "Remove-Item -LiteralPath 'build' -Force -Recurse -ErrorAction Ignore"
+        },
     ]
 }
