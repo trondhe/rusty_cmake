@@ -30,8 +30,7 @@ function(add_rust_lib)
 
     ## Set cxxbridge values
     cmake_path(GET _LIB_PATH STEM _LIB_PATH_STEM)
-    set(RUST_TARGET_TRIPLE "x86_64-pc-windows-gnu")
-    set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${RUST_TARGET_TRIPLE}/cxxbridge) 
+    set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${Rust_TOOLCHAIN}/cxxbridge) 
     set(COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
     set(BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.h)
     set(BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.cc)
