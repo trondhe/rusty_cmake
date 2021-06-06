@@ -1,7 +1,7 @@
 
 # Creates a target including rust lib and cxxbridge named ${NAMESPACE}::${LAST STEM OF PATH}
 # <LAST STEM OF PATH> must match the crate name ie "some/path/to/myrustcrate" -> "libmyrustcrate.a"
-function(add_rust_lib)
+function(add_library_rust)
     # set(OPTIONS)
     set(ONE_VALUE_KEYWORDS PATH NAMESPACE)
     # set(MULTI_VALUE_KEYWORDS)
@@ -10,7 +10,7 @@ function(add_rust_lib)
 
     ### Check inputs
     if("${_RUST_LIB_PATH}" STREQUAL "")
-        message(FATAL_ERROR "add_rust_lib called without a given path to root of a rust crate, fix by adding 'PATH <pathToRustlibRoot>'")
+        message(FATAL_ERROR "add_library_rust called without a given path to root of a rust crate, fix by adding 'PATH <pathToRustlibRoot>'")
     endif()
 
     if("${_RUST_LIB_NAMESPACE}" STREQUAL "")
@@ -68,4 +68,4 @@ function(add_rust_lib)
     # for end-user to link into project
     add_library(${_NAMESPACE}::${_LIB_PATH} ALIAS ${_LIB_PATH}-total)
     
-endfunction(add_rust_lib)
+endfunction(add_library_rust)
