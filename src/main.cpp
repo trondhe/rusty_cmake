@@ -1,4 +1,4 @@
-// #include "lib.rs.h"
+#include "rusty_code/src/lib.rs.h"
 #include <iostream>
 
 extern ::std::int32_t rusty_cxxbridge_integer() noexcept;
