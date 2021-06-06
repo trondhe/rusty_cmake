@@ -30,7 +30,8 @@ function(add_library_rust)
     corrosion_import_crate(MANIFEST_PATH "${_LIB_PATH}/Cargo.toml")
 
     ## Set cxxbridge values
-    cmake_path(GET _LIB_PATH STEM _LIB_PATH_STEM)
+    _get_stem_name_of_path(PATH ${_LIB_PATH})
+    set(_LIB_PATH_STEM ${STEM_OF_PATH})
     set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${Rust_TOOLCHAIN}/cxxbridge) 
     set(COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
     set(BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.h)
@@ -69,3 +70,34 @@ function(add_library_rust)
     add_library(${_NAMESPACE}::${_LIB_PATH} ALIAS ${_LIB_PATH}-total)
     
 endfunction(add_library_rust)
+
+
+function(_get_stem_name_of_path)
+    # set(OPTIONS)
+    set(ONE_VALUE_KEYWORDS PATH)
+    # set(MULTI_VALUE_KEYWORDS)
+    cmake_parse_arguments(_PATH_STEM "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}" ${ARGN})
+
+    ### Check inputs
+    if("${_PATH_STEM_PATH}" STREQUAL "")
+        message(FATAL_ERROR "Path to get stem for is empty!")
+    endif()
+
+    # Convert all slashes to forward slash
+    set(_PATH ${_PATH_STEM_PATH})
+    ## Replace all Windows double slashes
+    string(REPLACE "\\\\" "/" _PATH_OUTPUT ${_PATH})
+    set(_PATH ${_PATH_OUTPUT})
+    ## Replace all Windows single slashes
+    string(REPLACE "\\" "/" _PATH_OUTPUT ${_PATH}) 
+    set(_PATH ${_PATH_OUTPUT})
+
+    # Convert to list
+    string(REPLACE "/" ";" _PATH_AS_LIST ${_PATH})
+    list(LENGTH _PATH_AS_LIST LIST_LENGTH)
+    math(EXPR INDEX "${LIST_LENGTH} - 1" OUTPUT_FORMAT DECIMAL)
+
+    list(GET _PATH_AS_LIST "${INDEX}" _STEM)
+
+    set(STEM_OF_PATH ${_STEM} PARENT_SCOPE)
+endfunction(_get_stem_name_of_path)
