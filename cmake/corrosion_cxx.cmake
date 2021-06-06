@@ -5,25 +5,25 @@ function(add_rust_lib)
     # set(OPTIONS)
     set(ONE_VALUE_KEYWORDS PATH NAMESPACE)
     # set(MULTI_VALUE_KEYWORDS)
-    cmake_parse_arguments(ADD_RUST_LIB "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}" ${ARGN})
+    cmake_parse_arguments(_RUST_LIB "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}" ${ARGN})
 
 
     ### Check inputs
-    if("${ADD_RUST_LIB_PATH}" STREQUAL "")
+    if("${_RUST_LIB_PATH}" STREQUAL "")
         message(FATAL_ERROR "add_rust_lib called without a given path to root of a rust crate, fix by adding 'PATH <pathToRustlibRoot>'")
     endif()
 
-    if("${ADD_RUST_LIB_NAMESPACE}" STREQUAL "")
+    if("${_RUST_LIB_NAMESPACE}" STREQUAL "")
         message(FATAL_ERROR "Must supply a namespace given by keyvalue NAMESPACE <value>")
     endif()
 
-    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${ADD_RUST_LIB_PATH}/Cargo.toml")
-        message(FATAL_ERROR "The path ${CMAKE_CURRENT_LIST_DIR}/${ADD_RUST_LIB_PATH} does not contain a Cargo.toml")
+    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${_RUST_LIB_PATH}/Cargo.toml")
+        message(FATAL_ERROR "The path ${CMAKE_CURRENT_LIST_DIR}/${_RUST_LIB_PATH} does not contain a Cargo.toml")
     endif()
 
     ## Simplyfy inputs
-    set(_LIB_PATH ${ADD_RUST_LIB_PATH})
-    set(_NAMESPACE ${ADD_RUST_LIB_NAMESPACE})
+    set(_LIB_PATH ${_RUST_LIB_PATH})
+    set(_NAMESPACE ${_RUST_LIB_NAMESPACE})
 
 
     ## Import Rust target
