@@ -13,36 +13,38 @@ function(add_rust_lib path)
 
     corrosion_import_crate(MANIFEST_PATH "${path}/Cargo.toml")
 
-    # cmake_path(GET path STEM RUSTLIB_PROJECTFOLDER_NAME)
+    cmake_path(GET path STEM RUSTLIB_PROJECTFOLDER_NAME)
 
-    # set(RUST_TARGET_TRIPLE "x86_64-pc-windows-msvc")
+    set(RUST_TARGET_TRIPLE "x86_64-pc-windows-gnu")
 
-    # set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${RUST_TARGET_TRIPLE}/cxxbridge) 
+    set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${RUST_TARGET_TRIPLE}/cxxbridge) 
 
-    # set(CXX_COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
-    # set(CXX_BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rusty_code/src/lib.rs.h)
-    # set(CXX_BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/rusty_code/src/lib.rs.cc)
+    set(CXX_COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
+    set(CXX_BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${RUSTLIB_PROJECTFOLDER_NAME}/src/lib.rs.h)
+    set(CXX_BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${RUSTLIB_PROJECTFOLDER_NAME}/src/lib.rs.cc)
     
-    # set(CXX_BINDING_INCLUDE_DIR ${CXXBRIDGE_BINARY_FOLDER})
+    set(CXX_BINDING_INCLUDE_DIR ${CXXBRIDGE_BINARY_FOLDER})
 
-    # add_custom_command(
-    #     OUTPUT 
-    #         ${CXX_COMMON_HEADER}
-    #         ${CXX_BINDING_HEADER}
-    #         ${CXX_BINDING_SOURCE}
-    #     DEPENDS rusty_code
-    # )
+    add_custom_command(
+        DEPENDS ${RUSTLIB_PROJECTFOLDER_NAME}-static
+        OUTPUT
+            ${CXX_COMMON_HEADER}
+            ${CXX_BINDING_HEADER}
+            ${CXX_BINDING_SOURCE} 
+    )
 
-    # add_library(rust_code_cxxbridge)
-    # target_sources(rust_code_cxxbridge
-    #     PUBLIC
-    #         ${CXX_COMMON_HEADER}
-    #         ${CXX_BINDING_HEADER}
-    #         ${CXX_BINDING_SOURCE}
-    # )
-    # target_include_directories(rust_code_cxxbridge
-    #     PUBLIC
-    #         ${CXX_BINDING_INCLUDE_DIR}
-    # )
+    add_library(${RUSTLIB_PROJECTFOLDER_NAME}_cxxbridge)
+    target_sources(${RUSTLIB_PROJECTFOLDER_NAME}_cxxbridge
+        PUBLIC
+            ${CXX_COMMON_HEADER}
+            ${CXX_BINDING_HEADER}
+            ${CXX_BINDING_SOURCE}
+    )
+    target_include_directories(${RUSTLIB_PROJECTFOLDER_NAME}_cxxbridge
+        PUBLIC
+            ${CXX_BINDING_INCLUDE_DIR}
+    )
+
+    # add_library(${path})
     
 endfunction(add_rust_lib)

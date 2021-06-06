@@ -1,17 +1,16 @@
 // #include "lib.rs.h"
 #include <iostream>
 
-extern ::std::int32_t rusty_integer() noexcept;
+extern ::std::int32_t rusty_cxxbridge_integer() noexcept;
 
 extern "C" {
-
-int32_t rusty_c_integer();
+int32_t rusty_extern_c_integer();
 }
 
 int main() {
-  std::cout << "Hello!\n";
-  std::cout << rusty_integer() << "\n"; // Uncomment here to get the linker error
-  std::cout << "direct extern c function from rust with value: "
-            << rusty_c_integer() << "\n";
+  std::cout << "A value given via generated cxxbridge "
+            << rusty_cxxbridge_integer() << "\n";
+  std::cout << "A value given directly by extern c function "
+            << rusty_extern_c_integer() << "\n";
   return 0;
 }
