@@ -1,50 +1,71 @@
 
-function(add_rust_lib path)
+# Creates a target including rust lib and cxxbridge named ${NAMESPACE}::${LAST STEM OF PATH}
+function(add_rust_lib)
     # set(OPTIONS)
-    # set(ONE_VALUE_KEYWORDS)
+    set(ONE_VALUE_KEYWORDS PATH NAMESPACE)
     # set(MULTI_VALUE_KEYWORDS)
-    # cmake_parse_arguments(ADD_RUST_LIB "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}" ${ARGN})
-    # set(RUST_LIB_SRC_DIR ${ARG0})
+    cmake_parse_arguments(ADD_RUST_LIB "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}" ${ARGN})
 
 
-    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${path}/Cargo.toml")
-        message(FATAL_ERROR "The path ${CMAKE_CURRENT_LIST_DIR}/${path} does not contain a Cargo.toml")
+    ### Check inputs
+    if("${ADD_RUST_LIB_PATH}" STREQUAL "")
+        message(FATAL_ERROR "add_rust_lib called without a given path to root of a rust crate, fix by adding 'PATH <pathToRustlibRoot>'")
     endif()
 
-    corrosion_import_crate(MANIFEST_PATH "${path}/Cargo.toml")
+    if("${ADD_RUST_LIB_NAMESPACE}" STREQUAL "")
+        message(FATAL_ERROR "Must supply a namespace given by keyvalue NAMESPACE <value>")
+    endif()
 
-    cmake_path(GET path STEM RUSTLIB_PROJECTFOLDER_NAME)
+    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${ADD_RUST_LIB_PATH}/Cargo.toml")
+        message(FATAL_ERROR "The path ${CMAKE_CURRENT_LIST_DIR}/${ADD_RUST_LIB_PATH} does not contain a Cargo.toml")
+    endif()
 
+    ## Simplyfy inputs
+    set(_LIB_PATH ${ADD_RUST_LIB_PATH})
+    set(_NAMESPACE ${ADD_RUST_LIB_NAMESPACE})
+
+
+    ## Import Rust target
+    corrosion_import_crate(MANIFEST_PATH "${_LIB_PATH}/Cargo.toml")
+
+    ## Set cxxbridge values
+    cmake_path(GET _LIB_PATH STEM _LIB_PATH_STEM)
     set(RUST_TARGET_TRIPLE "x86_64-pc-windows-gnu")
-
     set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${RUST_TARGET_TRIPLE}/cxxbridge) 
-
-    set(CXX_COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
-    set(CXX_BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${RUSTLIB_PROJECTFOLDER_NAME}/src/lib.rs.h)
-    set(CXX_BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${RUSTLIB_PROJECTFOLDER_NAME}/src/lib.rs.cc)
-    
+    set(COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
+    set(BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.h)
+    set(BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.cc)
     set(CXX_BINDING_INCLUDE_DIR ${CXXBRIDGE_BINARY_FOLDER})
 
+    ## Create cxxbridge target
     add_custom_command(
-        DEPENDS ${RUSTLIB_PROJECTFOLDER_NAME}-static
+        DEPENDS ${_LIB_PATH_STEM}-static
         OUTPUT
-            ${CXX_COMMON_HEADER}
-            ${CXX_BINDING_HEADER}
-            ${CXX_BINDING_SOURCE} 
+            ${COMMON_HEADER}
+            ${BINDING_HEADER}
+            ${BINDING_SOURCE} 
     )
 
-    add_library(${RUSTLIB_PROJECTFOLDER_NAME}_cxxbridge)
-    target_sources(${RUSTLIB_PROJECTFOLDER_NAME}_cxxbridge
+    add_library(${_LIB_PATH_STEM}_cxxbridge)
+    target_sources(${_LIB_PATH_STEM}_cxxbridge
         PUBLIC
-            ${CXX_COMMON_HEADER}
-            ${CXX_BINDING_HEADER}
-            ${CXX_BINDING_SOURCE}
+            ${COMMON_HEADER}
+            ${BINDING_HEADER}
+            ${BINDING_SOURCE}
     )
-    target_include_directories(${RUSTLIB_PROJECTFOLDER_NAME}_cxxbridge
+    target_include_directories(${_LIB_PATH_STEM}_cxxbridge
         PUBLIC
             ${CXX_BINDING_INCLUDE_DIR}
     )
 
-    # add_library(${path})
+    ## Create total target with alias with given namespace
+    add_library(${_LIB_PATH}-total INTERFACE)
+    target_link_libraries(${_LIB_PATH}-total
+        INTERFACE
+            ${_LIB_PATH_STEM}_cxxbridge
+            ${_LIB_PATH}
+    )
+    # for end-user to link into project
+    add_library(${_NAMESPACE}::${_LIB_PATH} ALIAS ${_LIB_PATH}-total)
     
 endfunction(add_rust_lib)

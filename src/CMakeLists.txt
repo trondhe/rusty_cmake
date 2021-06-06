@@ -6,13 +6,10 @@ target_sources(${PROJECT_NAME}
 )
 
 set(Rust_TOOLCHAIN "x86_64-pc-windows-gnu")
-add_rust_lib(rusty_code)
-
-# add_subdirectory(cxxbridgecopy)
+add_rust_lib(PATH rusty_code NAMESPACE my)
 
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-        rusty_code
-        rusty_code_cxxbridge
+        my::rusty_code
 )
