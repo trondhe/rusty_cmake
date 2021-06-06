@@ -1,5 +1,6 @@
 
 # Creates a target including rust lib and cxxbridge named ${NAMESPACE}::${LAST STEM OF PATH}
+# <LAST STEM OF PATH> must match the crate name ie "some/path/to/myrustcrate" -> "libmyrustcrate.a"
 function(add_rust_lib)
     # set(OPTIONS)
     set(ONE_VALUE_KEYWORDS PATH NAMESPACE)
