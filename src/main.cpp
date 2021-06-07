@@ -1,8 +1,6 @@
 #include "rusty_code/src/lib.rs.h"
 #include <iostream>
 
-extern ::std::int32_t rusty_cxxbridge_integer() noexcept;
-
 extern "C" {
 int32_t rusty_extern_c_integer();
 }
