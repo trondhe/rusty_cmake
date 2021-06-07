@@ -4,3 +4,4 @@
 # Build folders
 build
 /target/
+Cargo.lock
