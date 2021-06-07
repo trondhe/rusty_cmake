@@ -30,9 +30,12 @@ function(add_library_rust)
     corrosion_import_crate(MANIFEST_PATH "${_LIB_PATH}/Cargo.toml")
 
     ## Set cxxbridge values
+
+    # parse stem
     _get_stem_name_of_path(PATH ${_LIB_PATH})
     set(_LIB_PATH_STEM ${STEM_OF_PATH})
-    set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${Rust_TOOLCHAIN}/cxxbridge) 
+
+    set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${Rust_CARGO_TARGET}/cxxbridge) 
     set(COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
     set(BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.h)
     set(BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.cc)
