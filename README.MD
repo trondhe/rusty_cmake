@@ -5,7 +5,9 @@ Integrate Rust in a Cmake project with [Corrosion](https://github.com/AndrewGasp
 ## Usage
 
 `Rust_CARGO_TARGET` needs to be defined before calling `add_library_rust`, which takes a `PATH` to the root of a rust crate along with a required `NAMESPACE` to use for the created target.  
-`add_library_rust(PATH some/path/to/rustycrate NAMESPACE my)` will result in a target `my::rustycrate` that includes both the crate itself and the generated cxxbridge header and source to be linked into another target.
+`add_library_rust(PATH some/path/to/rustycrate NAMESPACE my [CXX_BRIDGE_SOURCE_FILE src/lib.rs])` will result in a target `my::rustycrate` that includes both the crate itself and the generated cxxbridge header and source to be linked into another target.
+The optional parameter `CXX_BRIDGE_SOURCE_FILE` defaults to `src/lib.rs` and allows you to change the source of the `#[cxx::bridge]` implementation within the rust crate.
+
 
 ## Windows + Clang issue
 
