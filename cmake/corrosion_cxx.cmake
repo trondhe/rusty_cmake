@@ -3,7 +3,7 @@
 # <LAST STEM OF PATH> must match the crate name ie "some/path/to/myrustcrate" -> "libmyrustcrate.a"
 function(add_library_rust)
     # set(OPTIONS)
-    set(ONE_VALUE_KEYWORDS PATH NAMESPACE)
+    set(ONE_VALUE_KEYWORDS PATH NAMESPACE CXX_BRIDGE_SOURCE_FILE)
     # set(MULTI_VALUE_KEYWORDS)
     cmake_parse_arguments(_RUST_LIB "${OPTIONS}" "${ONE_VALUE_KEYWORDS}" "${MULTI_VALUE_KEYWORDS}" ${ARGN})
 
@@ -17,6 +17,10 @@ function(add_library_rust)
         message(FATAL_ERROR "Must supply a namespace given by keyvalue NAMESPACE <value>")
     endif()
 
+    if("${_RUST_LIB_CXX_BRIDGE_SOURCE_FILE}" STREQUAL "")
+        set(_RUST_LIB_CXX_BRIDGE_SOURCE_FILE "src/lib.rs")
+    endif()
+
     if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${_RUST_LIB_PATH}/Cargo.toml")
         message(FATAL_ERROR "The path ${CMAKE_CURRENT_LIST_DIR}/${_RUST_LIB_PATH} does not contain a Cargo.toml")
     endif()
@@ -24,7 +28,7 @@ function(add_library_rust)
     ## Simplyfy inputs
     set(_LIB_PATH ${_RUST_LIB_PATH})
     set(_NAMESPACE ${_RUST_LIB_NAMESPACE})
-
+    set(_CXX_BRIDGE_SOURCE_FILE ${_RUST_LIB_CXX_BRIDGE_SOURCE_FILE})
 
     ## Import Rust target
     corrosion_import_crate(MANIFEST_PATH "${_LIB_PATH}/Cargo.toml")
@@ -37,8 +41,8 @@ function(add_library_rust)
 
     set(CXXBRIDGE_BINARY_FOLDER ${CMAKE_BINARY_DIR}/cargo/build/${Rust_CARGO_TARGET}/cxxbridge) 
     set(COMMON_HEADER ${CXXBRIDGE_BINARY_FOLDER}/rust/cxx.h)
-    set(BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.h)
-    set(BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/src/lib.rs.cc)
+    set(BINDING_HEADER ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/${_CXX_BRIDGE_SOURCE_FILE}.h)
+    set(BINDING_SOURCE ${CXXBRIDGE_BINARY_FOLDER}/${_LIB_PATH_STEM}/${_CXX_BRIDGE_SOURCE_FILE}.cc)
     set(CXX_BINDING_INCLUDE_DIR ${CXXBRIDGE_BINARY_FOLDER})
 
     ## Create cxxbridge target
