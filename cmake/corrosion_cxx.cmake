@@ -67,14 +67,14 @@ function(add_library_rust)
     )
 
     ## Create total target with alias with given namespace
-    add_library(${_LIB_PATH}-total INTERFACE)
-    target_link_libraries(${_LIB_PATH}-total
+    add_library(${_LIB_PATH_STEM}-total INTERFACE)
+    target_link_libraries(${_LIB_PATH_STEM}-total
         INTERFACE
             ${_LIB_PATH_STEM}_cxxbridge
-            ${_LIB_PATH}
+            ${_LIB_PATH_STEM}
     )
     # for end-user to link into project
-    add_library(${_NAMESPACE}::${_LIB_PATH} ALIAS ${_LIB_PATH}-total)
+    add_library(${_NAMESPACE}::${_LIB_PATH_STEM} ALIAS ${_LIB_PATH_STEM}-total)
     
 endfunction(add_library_rust)
 
