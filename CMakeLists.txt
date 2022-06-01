@@ -4,10 +4,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 project(rusty_cmake CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     set(Rust_CARGO_TARGET "x86_64-pc-windows-gnu")
 elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     set(Rust_CARGO_TARGET "x86_64-unknown-linux-gnu")
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+    set(Rust_CARGO_TARGET "x86_64-apple-darwin")
 else()
     message(FATAL_ERROR "hardcoded platformchecks not supported outside windows-gnu and linux-gnu")
 endif()
