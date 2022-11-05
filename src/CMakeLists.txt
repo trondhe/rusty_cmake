@@ -1,13 +1,5 @@
-add_executable(${PROJECT_NAME})
+corrosion_import_crate(MANIFEST_PATH rusty_code/Cargo.toml)
+corrosion_add_cxxbridge(rusty_bridge CRATE rusty_code MANIFEST_PATH rusty_code FILES lib.rs)
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        main.cpp
-)
-
-add_library_rust(PATH rusty_code NAMESPACE my)
-
-target_link_libraries(${PROJECT_NAME}
-    PUBLIC
-        my::rusty_code
-)
+add_executable(rusty_cmake main.cpp)
+target_link_libraries(rusty_cmake PRIVATE rusty_bridge)

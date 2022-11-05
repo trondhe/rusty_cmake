@@ -1,4 +1,4 @@
-#include "rusty_code/src/lib.rs.h"
+#include "rusty_bridge/lib.h"
 #include <iostream>
 
 extern "C" {
