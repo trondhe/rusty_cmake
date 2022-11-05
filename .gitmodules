@@ -1,3 +1,0 @@
-[submodule "thirdparty/corrosion"]
-	path = thirdparty/corrosion
-	url = https://github.com/AndrewGaspar/corrosion.git

@@ -1,22 +1,28 @@
-cmake_minimum_required(VERSION 3.16)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+cmake_minimum_required(VERSION 3.23)
 
 project(rusty_cmake CXX)
 
+include(FetchContent)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(CMAKE_CXX_STANDARD 17)
 
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-    set(Rust_CARGO_TARGET "x86_64-pc-windows-gnu")
-elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    set(Rust_CARGO_TARGET "x86_64-unknown-linux-gnu")
-elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
-    set(Rust_CARGO_TARGET "x86_64-apple-darwin")
-else()
-    message(FATAL_ERROR "hardcoded platformchecks not supported outside windows-gnu and linux-gnu")
-endif()
+FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG master
+)
+FetchContent_MakeAvailable(Corrosion)
 
-include(cmake/corrosion_cxx.cmake)
-add_subdirectory(thirdparty/corrosion)
+find_program(CXXBRIDGE cxxbridge PATHS "$ENV{HOME}/.cargo/bin/")
+if (CXXBRIDGE STREQUAL "CXXBRIDGE-NOTFOUND")
+    message("Could not find cxxbridge, trying to install with `cargo install cxxbridge-cmd'")
+    find_program(CARGO cargo PATHS "$ENV{HOME}/.cargo/bin/")
+    if (CARGO STREQUAL "CARGO-NOTFOUND")
+        message(FATAL_ERROR "Requires cargo available in path, install via rustup https://rustup.rs/")
+    endif()
+    execute_process(COMMAND ${CARGO} install cxxbridge-cmd)
+    find_program(CXXBRIDGE cxxbridge PATHS "$ENV{HOME}/.cargo/bin/")
+endif()
 
 add_subdirectory(src)
