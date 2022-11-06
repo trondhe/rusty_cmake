@@ -6,6 +6,11 @@ This has now been updated with using `corrosion_add_cxxbridge` function from cor
 
 To build and run do
 
+configure:  
 `cmake --preset default`
+
+build:  
 `cmake --build --preset default`
+
+run:  
 `build/default/src/rusty_cmake`
